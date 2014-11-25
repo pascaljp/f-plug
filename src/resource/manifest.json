@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "F-PLUG watcher",
+  "version": "1.0",
+  "description": "Connects to F-PLUG and periodically checks realtime value.",
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "icons": {
+    "16": "icon.png",
+    "128": "icon.png"
+  },
+  "permissions": [
+    "https://www.google.com/jsapi",
+    {"fileSystem": ["write", "directory"]}
+  ],
+  "bluetooth": {
+    "uuids": [ "1101" ],
+    "socket": true
+  }
+}
