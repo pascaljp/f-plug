@@ -13,7 +13,7 @@ FPlug = function(fileSystem) {
 
   self.tid = 0;
   self.timeoutId = null;
-}
+};
 
 FPlug.prototype = new BluetoothDevice('1101');
 

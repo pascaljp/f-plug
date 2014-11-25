@@ -2,12 +2,18 @@ goog.provide('Util');
 
 Util = function() {};
 
+/**
+ * @param {string} format Format of day. YYYY for full year, MM for month,
+ *     DD for date, hh for hour, mm for minute, ss for second, SSS for
+ *     milli seconds.
+ * @return {string} formatted date string
+ */
 Util.formatDate = function(format) {
   var date = new Date();
   if (!format) {
     format = 'YYYY-MM-DD hh:mm:ss.SSS';
   }
-  format = format.replace(/YYYY/g, date.getFullYear());
+  format = format.replace(/YYYY/g, '' + date.getFullYear());
   format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
   format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
   format = format.replace(/hh/g, ('0' + date.getHours()).slice(-2));

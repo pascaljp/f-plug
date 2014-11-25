@@ -2,6 +2,7 @@ goog.provide('BluetoothDevice');
 
 /**
  * @constructor
+ * @param {string} uuid UUID of bluetooth profile
  */
 BluetoothDevice = function(uuid) {
   var self = this;
@@ -14,7 +15,7 @@ BluetoothDevice = function(uuid) {
 
   self.onConnectCallback = null;
   self.onDisconnectCallback = null;
-}
+};
 
 /**
  * @private

@@ -125,7 +125,9 @@ var lookupDevices = function(logFile, unusedAdapterInfo) {
 
 var run = function() {
   var logFile = new FileObject(fileSystem);
-  logFile.prefix = function() { return Util.formatDate('[YYYY/MM/DD hh:mm:ss] '); };
+  logFile.prefix = function() {
+    return Util.formatDate('[YYYY/MM/DD hh:mm:ss] ');
+  };
   logFile.open(
     'error_log.txt', 'w',
     function() {

@@ -1,5 +1,5 @@
-goog.provide('MyFileSystem');
 goog.provide('FileObject');
+goog.provide('MyFileSystem');
 
 /**
  * @constructor
@@ -7,7 +7,7 @@ goog.provide('FileObject');
 MyFileSystem = function() {
   var self = this;
   self.rootEntry = null;
-}
+};
 
 MyFileSystem.prototype.getRootEntry = function(onSuccess, onFailure) {
   var self = this;
@@ -29,6 +29,7 @@ MyFileSystem.prototype.getRootEntry = function(onSuccess, onFailure) {
 
 /**
  * @constructor
+ * @param {MyFileSystem} fileSystem
  */
 FileObject = function(fileSystem) {
   var self = this;
@@ -42,7 +43,7 @@ FileObject = function(fileSystem) {
 
   self.prefix = function() {return '';};
   self.suffix = function() {return '\n';};
-}
+};
 
 FileObject.FILE_STATE_ = {
   'CLOSED': 0,

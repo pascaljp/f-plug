@@ -11,8 +11,10 @@ chrome.bluetoothSocket = function() {};
 chrome.bluetoothSocket.create = function(properties, callback) {};
 chrome.bluetoothSocket.update = function(socketId, properties, callback) {};
 chrome.bluetoothSocket.setPaused = function(socketId, paused, callback) {};
-chrome.bluetoothSocket.listenUsingRfcomm = function(socketId, uuid, options, callback) {};
-chrome.bluetoothSocket.listenUsingL2cap = function(socketId, uuid, options, callback) {};
+chrome.bluetoothSocket.listenUsingRfcomm =
+  function(socketId, uuid, options, callback) {};
+chrome.bluetoothSocket.listenUsingL2cap =
+  function(socketId, uuid, options, callback) {};
 chrome.bluetoothSocket.connect = function(socketId, address, uuid, callback) {};
 chrome.bluetoothSocket.disconnect = function(socketId, callback) {};
 chrome.bluetoothSocket.close = function(socketId, callback) {};
@@ -78,11 +80,11 @@ var Device = function() {};
 Device.prototype.address = null;
 Device.prototype.name = null;
 Device.prototype.deviceClass = 0;
-Device.prototype.vendorIdSource = "bluetooth";
+Device.prototype.vendorIdSource = 'bluetooth';
 Device.prototype.vendorIdSource = 0;
 Device.prototype.productId = 0;
 Device.prototype.deviceId = 0;
 Device.prototype.type = null;
 Device.prototype.paired = false;
 Device.prototype.connected = false;
-Device.prototype.uuids = [];
+Device.prototype.uuids = null;
