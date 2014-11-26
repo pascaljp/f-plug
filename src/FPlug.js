@@ -1,8 +1,7 @@
 goog.provide('FPlug');
-goog.require('BluetoothDevice');
-goog.require('FileObject');
-goog.require('MyFileSystem');
 goog.require('Util');
+goog.require('apps.BluetoothDevice');
+goog.require('apps.File');
 
 FPlug = function(fileSystem) {
   var self = this;
@@ -15,12 +14,20 @@ FPlug = function(fileSystem) {
   self.timeoutId = null;
 };
 
-FPlug.prototype = new BluetoothDevice('1101');
+FPlug.prototype = new apps.BluetoothDevice('1101');
 
+/**
+ * Given BluetoothDevice object, returns if this object can handle it.
+ * @param {Object} device Bluetooth Device.
+ * @return {boolean}
+ */
 FPlug.isSupportedDevice = function(device) {
   return device.name.search(/F-PLUG/) != -1;
 };
 
+/**
+ * @return {apps.File} File object to log data.
+ */
 FPlug.prototype.getStream = function() {
   var self = this;
   var fileName = self.address + '_' + Util.formatDate('YYYYMMDD') + '.txt';
@@ -28,7 +35,7 @@ FPlug.prototype.getStream = function() {
     if (self.stream) {
       self.stream.close(function() {});
     }
-    self.stream = new FileObject(self.fileSystem);
+    self.stream = new apps.File(self.fileSystem);
     self.stream.open(
       fileName, 'w',
       function() {},
@@ -45,11 +52,17 @@ FPlug.prototype.getStream = function() {
   return self.stream;
 };
 
+/**
+ * Called when a user wants to start using the device.
+ */
 FPlug.prototype.run = function() {
   var self = this;
   self.loop();
 };
 
+/**
+ * A function to be called every second after starting.
+ */
 FPlug.prototype.loop = function() {
   var self = this;
   //console.log('Running');
@@ -84,6 +97,9 @@ FPlug.prototype.loop = function() {
   self.timeoutId = window.setTimeout(function() { self.loop(); }, 1000);
 };
 
+/**
+ * Called when a user wants to stop using the device.
+ */
 FPlug.prototype.stop = function() {
   var self = this;
 
@@ -93,6 +109,12 @@ FPlug.prototype.stop = function() {
   }
 };
 
+/**
+ * Sends a request to get temperature info to F-PLUG device.
+ * @param {string} time Formatted as "YYYY/MM/DD hh:mm:dd"
+ * @param {function()} callback Called when temperature information received a
+ *     data.
+ */
 FPlug.prototype.getTemperature = function(time, callback) {
   var self = this;
 
@@ -106,6 +128,12 @@ FPlug.prototype.getTemperature = function(time, callback) {
   self.send(data);
 };
 
+/**
+ * Sends a request to get energy consumption info to F-PLUG device.
+ * @param {string} time Formatted as "YYYY/MM/DD hh:mm:dd"
+ * @param {function()} callback Called when energy consumption information
+ *     received a data.
+ */
 FPlug.prototype.getElectricity = function(time, callback) {
   var self = this;
 
@@ -119,6 +147,12 @@ FPlug.prototype.getElectricity = function(time, callback) {
   self.send(data);
 };
 
+/**
+ * Sends a request to get humidity info to F-PLUG device.
+ * @param {string} time Formatted as "YYYY/MM/DD hh:mm:dd"
+ * @param {function()} callback Called when humidity information received a
+ *     data.
+ */
 FPlug.prototype.getHumidity = function(time, callback) {
   var self = this;
 
@@ -132,6 +166,12 @@ FPlug.prototype.getHumidity = function(time, callback) {
   self.send(data);
 };
 
+/**
+ * Sends a request to get brightness info to F-PLUG device.
+ * @param {string} time Formatted as "YYYY/MM/DD hh:mm:dd"
+ * @param {function()} callback Called when brightness information received a
+ *     data.
+ */
 FPlug.prototype.getBrightness = function(time, callback) {
   var self = this;
 
@@ -145,7 +185,10 @@ FPlug.prototype.getBrightness = function(time, callback) {
   self.send(data);
 };
 
-
+/**
+ * Called when a data is received from the F-PLUG device.
+ * @param {ArrayBuffer} byteList Received data
+ */
 FPlug.prototype.onReceive = function(byteList) {
   var self = this;
   // byteList is an ArrayBuffer.
@@ -167,6 +210,11 @@ FPlug.prototype.onReceive = function(byteList) {
   delete self.commandCallback[tid];
 };
 
+/**
+ * @param {Uint8Array} message
+ * @param {string} time
+ * @param {function()} callback
+ */
 FPlug.prototype.onTemperatureReceived = function(message, time, callback) {
   var self = this;
   var value = (message[14] + message[15] * 256) / 10.0;
@@ -174,6 +222,11 @@ FPlug.prototype.onTemperatureReceived = function(message, time, callback) {
   callback();
 };
 
+/**
+ * @param {Uint8Array} message
+ * @param {string} time
+ * @param {function()} callback
+ */
 FPlug.prototype.onElectricityReceived = function(message, time, callback) {
   var self = this;
   var value = (message[14] + message[15] * 256) / 10.0;
@@ -181,6 +234,11 @@ FPlug.prototype.onElectricityReceived = function(message, time, callback) {
   callback();
 };
 
+/**
+ * @param {Uint8Array} message
+ * @param {string} time
+ * @param {function()} callback
+ */
 FPlug.prototype.onHumidityReceived = function(message, time, callback) {
   var self = this;
   var value = message[14];
@@ -188,6 +246,11 @@ FPlug.prototype.onHumidityReceived = function(message, time, callback) {
   callback();
 };
 
+/**
+ * @param {Uint8Array} message
+ * @param {string} time
+ * @param {function()} callback
+ */
 FPlug.prototype.onBrightnessReceived = function(message, time, callback) {
   var self = this;
   var value = message[14] + message[15] * 256;

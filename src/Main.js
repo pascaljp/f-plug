@@ -1,8 +1,7 @@
-goog.require('BluetoothDevice');
 goog.require('FPlug');
-goog.require('FileObject');
-goog.require('MyFileSystem');
 goog.require('Util');
+goog.require('apps.File');
+goog.require('apps.FileSystem');
 
 var getAvailableBluetoothAdapter = function(onSuccess, onFailure) {
   chrome.bluetooth.getAdapterState(
@@ -21,7 +20,7 @@ var getAvailableBluetoothAdapter = function(onSuccess, onFailure) {
     });
 };
 
-var fileSystem = new MyFileSystem;
+var fileSystem = new apps.FileSystem;
 
 var lookupDevices = function(logFile, unusedAdapterInfo) {
   var onDeviceFound = function(device) {
@@ -43,7 +42,7 @@ var lookupDevices = function(logFile, unusedAdapterInfo) {
       }
       logFile.write(device.address + ' matched with a device type.');
       console.log(device.address + ' matched with a device type.');
-      var errorFile = new FileObject(fileSystem);
+      var errorFile = new apps.File(fileSystem);
       errorFile.prefix = function() {
         return Util.formatDate('[YYYY/MM/DD hh:mm:ss] ');
       };
@@ -124,7 +123,7 @@ var lookupDevices = function(logFile, unusedAdapterInfo) {
 };
 
 var run = function() {
-  var logFile = new FileObject(fileSystem);
+  var logFile = new apps.File(fileSystem);
   logFile.prefix = function() {
     return Util.formatDate('[YYYY/MM/DD hh:mm:ss] ');
   };

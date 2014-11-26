@@ -1,16 +1,16 @@
-goog.provide('BluetoothDevice');
+goog.provide('apps.BluetoothDevice');
 
 /**
  * @constructor
  * @param {string} uuid UUID of bluetooth profile
  */
-BluetoothDevice = function(uuid) {
+apps.BluetoothDevice = function(uuid) {
   var self = this;
   self.uuid = uuid;
   self.address = null;
   self.errorStream = null;
 
-  self.state = BluetoothDevice.STATE_.CLOSED;
+  self.state = apps.BluetoothDevice.STATE_.CLOSED;
   self.socketId = null;
 
   self.onConnectCallback = null;
@@ -20,7 +20,7 @@ BluetoothDevice = function(uuid) {
 /**
  * @private
  */
-BluetoothDevice.STATE_ = {
+apps.BluetoothDevice.STATE_ = {
   CLOSED: 0,
   CREATING: 1,
   CONNECTING: 2,
@@ -33,9 +33,9 @@ BluetoothDevice.STATE_ = {
  * @param {string} address
  * @param {function()} onConnectCallback
  * @param {function()} onDisconnectCallback
- * @param {FileObject} errorStream
+ * @param {apps.File} errorStream
  */
-BluetoothDevice.prototype.connect = function(
+apps.BluetoothDevice.prototype.connect = function(
   address,  onConnectCallback, onDisconnectCallback, errorStream) {
   var self = this;
 
@@ -48,32 +48,32 @@ BluetoothDevice.prototype.connect = function(
     onDisconnectCallback();
   };
 
-  if (this.state == BluetoothDevice.STATE_.CLOSING) {
+  if (this.state == apps.BluetoothDevice.STATE_.CLOSING) {
     self.errorStream.write(
       'Device ' + self.address + ' is being disconnectd.');
     return;
   }
-  if (this.state == BluetoothDevice.STATE_.CONNECTED) {
+  if (this.state == apps.BluetoothDevice.STATE_.CONNECTED) {
     self.errorStream.write(
       'Device ' + self.address + ' is already connected.');
     return;
   }
-  if (self.state == BluetoothDevice.STATE_.CONNECTING) {
+  if (self.state == apps.BluetoothDevice.STATE_.CONNECTING) {
     self.errorStream.write(
       'Device ' + self.address + ' is already connecting.');
     return;
   }
-  if (self.state == BluetoothDevice.STATE_.CREATING) {
+  if (self.state == apps.BluetoothDevice.STATE_.CREATING) {
     self.errorStream.write(
       'Device ' + self.address + ' is already creating.');
     return;
   }
 
-  self.state = BluetoothDevice.STATE_.CREATING;
+  self.state = apps.BluetoothDevice.STATE_.CREATING;
   chrome.bluetoothSocket.create(
     {},
     function(createInfo) {
-      self.state = BluetoothDevice.STATE_.CONNECTING;
+      self.state = apps.BluetoothDevice.STATE_.CONNECTING;
       self.errorStream.write('Created a socket (' + createInfo.socketId + ')');
       self.socketId = createInfo.socketId;
       chrome.bluetoothSocket.connect(
@@ -94,7 +94,7 @@ BluetoothDevice.prototype.connect = function(
             }
             self.onReceive(info.data);
           });
-          self.state = BluetoothDevice.STATE_.CONNECTED;
+          self.state = apps.BluetoothDevice.STATE_.CONNECTED;
           self.errorStream.write('Connected to device: ' + self.address);
           self.onConnectCallback();
         });
@@ -104,20 +104,20 @@ BluetoothDevice.prototype.connect = function(
 /**
  * Disconnect from the bluetooth device.
  */
-BluetoothDevice.prototype.disconnect = function() {
+apps.BluetoothDevice.prototype.disconnect = function() {
   var self = this;
 
-  if (self.state == BluetoothDevice.STATE_.CLOSING ||
-      self.state == BluetoothDevice.STATE_.CLOSED) {
+  if (self.state == apps.BluetoothDevice.STATE_.CLOSING ||
+      self.state == apps.BluetoothDevice.STATE_.CLOSED) {
     return;
   }
 
-  self.state = BluetoothDevice.STATE_.CLOSING;
+  self.state = apps.BluetoothDevice.STATE_.CLOSING;
   self.errorStream.write(
     'Closing connection with socket ' + self.socketId + ' (' +
       self.address + ')');
   chrome.bluetoothSocket.close(self.socketId, function() {
-    self.state = BluetoothDevice.STATE_.CLOSED;
+    self.state = apps.BluetoothDevice.STATE_.CLOSED;
     var disconnectedSocketId = self.socketId;
     self.socketId = null;
 
@@ -130,10 +130,10 @@ BluetoothDevice.prototype.disconnect = function() {
  * Send data to the bluetooth device.
  * @param {string} byteList
  */
-BluetoothDevice.prototype.send = function(byteList) {
+apps.BluetoothDevice.prototype.send = function(byteList) {
   var self = this;
 
-  if (self.state != BluetoothDevice.STATE_.CONNECTED) {
+  if (self.state != apps.BluetoothDevice.STATE_.CONNECTED) {
     self.errorStream.write('Send failed: Not connected to device');
     self.disconnect();
     return;
@@ -157,5 +157,5 @@ BluetoothDevice.prototype.send = function(byteList) {
  * Called when the bluetooth device receives data.
  * @param {ArrayBuffer} byteList
  */
-BluetoothDevice.prototype.onReceive = function(byteList) {
+apps.BluetoothDevice.prototype.onReceive = function(byteList) {
 };
